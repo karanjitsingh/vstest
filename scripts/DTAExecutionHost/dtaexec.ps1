@@ -9,6 +9,9 @@ $args[2] > $path
 
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 
+echo "#DTAEXEC"
+cat .\scripts\DTAExecutionHost\make.json
+
 $makejson = cat .\scripts\DTAExecutionHost\make.json | ConvertFrom-Json
 $url = echo $makejson.externals.archivePackages[1].url
 
