@@ -9,7 +9,7 @@ $args[2] > $path
 
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 
-$makejson = cat .\DTAExecutionHost\make.json | ConvertFrom-Json
+$makejson = cat .\scripts\DTAExecutionHost\make.json | ConvertFrom-Json
 $url = echo $makejson.externals.archivePackages[1].url
 
 (New-Object System.Net.WebClient).DownloadFile($url, "TestExecution.zip")
@@ -22,7 +22,7 @@ $p.StartInfo.UseShellExecute = $false
 $p.StartInfo.FileName = ".\TestExecution\DTAExecutionHost.exe"
 $p.StartInfo.WorkingDirectory = $root
 
-$envjson = cat .\DTAExecutionHost\env.json | ConvertFrom-Json
+$envjson = cat .\scripts\DTAExecutionHost\env.json | ConvertFrom-Json
 
 $props=Get-Member -InputObject $envjson -MemberType NoteProperty
 
