@@ -115,5 +115,21 @@ namespace Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces
         /// The directory path.
         /// </param>
         void DeleteEmptyDirectroy(string directoryPath);
+
+        /// <summary>
+        /// Gets all files in directory based on search pattern
+        /// </summary>
+        /// <param name="path">Directory Path</param>
+        /// <param name="searchPattern">searchPattern</param>
+        /// <param name="searchOption">searchOption</param>
+        /// <returns>Bool</returns>
+        string[] GetFiles(string path, string searchPattern, SearchOption searchOption);
+
+
+        /// <summary>
+        /// Gets last write time of file
+        /// </summary>
+        /// <param name="path">Full path of the file.</param>
+        DateTime GetLastWriteTime(string path);
     }
 }
