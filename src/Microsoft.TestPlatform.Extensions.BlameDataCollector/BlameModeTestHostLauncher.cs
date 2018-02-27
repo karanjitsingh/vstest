@@ -109,7 +109,7 @@ namespace Microsoft.TestPlatform.Extensions.BlameDataCollector
                 this.ErrorReceivedCallback,
                 this.ExitCallBack) as Process;
 
-            char[] delimiterChar = { '\\' };
+            char[] delimiterChar = { '\\', '/' };
             string[] splits = testHostStartInfo.FileName.Split(delimiterChar);
 
             // Get the name of the exe launched
