@@ -202,7 +202,7 @@ namespace vstest.console.UnitTests.Processors
         private EnableBlameArgumentExecutor GetExecutor(ITestRequestManager testRequestManager)
         {
             var executor = new EnableBlameArgumentExecutor(
-                this.settingsProvider, testRequestManager, CommandLineOptions.Instance, this.mockTestHostLauncher.Object);
+                this.settingsProvider, testRequestManager, CommandLineOptions.Instance);
             return executor;
         }
 

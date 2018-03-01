@@ -3,7 +3,7 @@
 
 namespace Microsoft.TestPlatform.Extensions.BlameDataCollector.UnitTests
 {
-    using System;
+    /* using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
 
@@ -255,5 +255,5 @@ namespace Microsoft.TestPlatform.Extensions.BlameDataCollector.UnitTests
             {
             }
         }
-    }
+    } */
 }

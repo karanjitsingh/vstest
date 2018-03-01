@@ -424,6 +424,8 @@ namespace Microsoft.TestPlatform.Extensions.EventLogCollector.UnitTests
     /// </summary>
     public class TestableDataCollectionEvents : DataCollectionEvents
     {
+        public override event EventHandler<TestHostInitializedEventArgs> TestHostInitialized;
+
         public override event EventHandler<SessionStartEventArgs> SessionStart;
 
         public override event EventHandler<SessionEndEventArgs> SessionEnd;
@@ -431,6 +433,11 @@ namespace Microsoft.TestPlatform.Extensions.EventLogCollector.UnitTests
         public override event EventHandler<TestCaseStartEventArgs> TestCaseStart;
 
         public override event EventHandler<TestCaseEndEventArgs> TestCaseEnd;
+
+        public Delegate[] GetTestHostInitializedInvocationList()
+        {
+            return this.TestHostInitialized.GetInvocationList();
+        }
 
         public Delegate[] GetTestCaseStartInvocationList()
         {

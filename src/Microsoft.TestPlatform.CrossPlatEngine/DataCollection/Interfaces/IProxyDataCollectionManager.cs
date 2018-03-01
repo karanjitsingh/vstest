@@ -53,5 +53,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CrossPlatEngine.DataCollection.Int
         /// The <see cref="Collection"/>.
         /// </returns>
         Collection<AttachmentSet> AfterTestRunEnd(bool isCanceled, ITestMessageEventHandler runEventsHandler);
+
+        void AfterTestHostInitialized(int processId);
     }
 }

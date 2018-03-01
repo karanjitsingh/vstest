@@ -5,6 +5,7 @@ namespace Microsoft.TestPlatform.Extensions.BlameDataCollector
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.IO;
     using System.Linq;
     using System.Xml;
@@ -26,6 +27,11 @@ namespace Microsoft.TestPlatform.Extensions.BlameDataCollector
         private XmlElement configurationElement;
         private int testStartCount;
         private int testEndCount;
+
+        private ProcessDumpUtility processDumpUtility;
+        private bool processDumpEnabled;
+
+        private string attachmentPostfix;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BlameCollector"/> class.
@@ -80,9 +86,14 @@ namespace Microsoft.TestPlatform.Extensions.BlameDataCollector
             this.testSequence = new List<TestCase>();
 
             // Subscribing to events
+            this.events.TestHostInitialized += this.TestHostInitialized_Handler;
             this.events.SessionEnd += this.SessionEnded_Handler;
             this.events.TestCaseStart += this.EventsTestCaseStart;
             this.events.TestCaseEnd += this.EventsTestCaseEnd;
+
+            this.processDumpEnabled = this.configurationElement["Dump"] != null;
+
+            this.attachmentPostfix = Guid.NewGuid().ToString().Replace("-", string.Empty);
         }
 
         /// <summary>
@@ -133,13 +144,36 @@ namespace Microsoft.TestPlatform.Extensions.BlameDataCollector
             // And send the attachment
             if (this.testStartCount > this.testEndCount)
             {
-                var filepath = Path.Combine(this.GetResultsDirectory(), Constants.AttachmentFileName);
+                var filepath = Path.Combine(this.GetResultsDirectory(), Constants.AttachmentFileName + "_" + this.attachmentPostfix);
                 filepath = this.blameReaderWriter.WriteTestSequence(this.testSequence, filepath);
                 var fileTranferInformation = new FileTransferInformation(this.context.SessionDataCollectionContext, filepath, true);
+
                 this.dataCollectionSink.SendFileAsync(fileTranferInformation);
             }
 
+            if (this.processDumpEnabled)
+            {
+                // Will wait for procdump if it hasn't exited
+                var dumpFiles = this.processDumpUtility.GetDumpFiles();
+                foreach (string filepath in dumpFiles)
+                {
+                    var fileTranferInformation = new FileTransferInformation(this.context.SessionDataCollectionContext, filepath, true);
+                    this.dataCollectionSink.SendFileAsync(fileTranferInformation);
+                }
+            }
+
             this.DeregisterEvents();
+        }
+
+        private void TestHostInitialized_Handler(object sender, TestHostInitializedEventArgs args)
+        {
+            if (!this.processDumpEnabled)
+            {
+                return;
+            }
+
+            this.processDumpUtility = new ProcessDumpUtility();
+            this.processDumpUtility.StartProcessDump(args.TestHostProcessId, Process.GetProcessById(args.TestHostProcessId).ProcessName, this.attachmentPostfix);
         }
 
         /// <summary>

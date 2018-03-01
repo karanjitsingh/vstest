@@ -32,6 +32,8 @@ namespace Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.DataCollect
         /// </summary>
         void Close();
 
+        void SendAfterTestHostInitialized(int processId);
+
         /// <summary>
         /// Sends the BeforeTestRunStart event and waits for result
         /// </summary>

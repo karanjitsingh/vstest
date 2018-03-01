@@ -4,7 +4,9 @@
 namespace Microsoft.TestPlatform.Extensions.BlameDataCollector
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using System.Text;
     using Microsoft.VisualStudio.TestPlatform.ObjectModel;
@@ -33,11 +35,6 @@ namespace Microsoft.TestPlatform.Extensions.BlameDataCollector
         public const string FriendlyName = "Blame";
 
         /// <summary>
-        /// List of dump files
-        /// </summary>
-        private static List<string> dumpList;
-
-        /// <summary>
         /// The blame reader writer.
         /// </summary>
         private readonly IBlameReaderWriter blameReaderWriter;
@@ -56,6 +53,7 @@ namespace Microsoft.TestPlatform.Extensions.BlameDataCollector
         /// Is Dump Enabled
         /// </summary>
         private bool isDumpEnabled;
+
         #endregion
 
         #region Constructor
@@ -80,7 +78,6 @@ namespace Microsoft.TestPlatform.Extensions.BlameDataCollector
             this.output = output;
             this.blameReaderWriter = blameReaderWriter;
             this.environment = environment ?? throw new ArgumentNullException(nameof(environment));
-            dumpList = new List<string>();
         }
 
         #endregion
@@ -119,34 +116,6 @@ namespace Microsoft.TestPlatform.Extensions.BlameDataCollector
             if (testRunDictionary.ContainsKey(Constants.DumpKey))
             {
                 this.isDumpEnabled = true;
-            }
-        }
-
-        internal static void AddFileToDumpList(string filename)
-        {
-            if (dumpList == null)
-            {
-                dumpList = new List<string>();
-            }
-
-            dumpList.Add(filename);
-        }
-
-        internal static int GetDumpListCount()
-        {
-            if (dumpList == null)
-            {
-                return 0;
-            }
-
-            return dumpList.Count;
-        }
-
-        internal static void ClearDumpList()
-        {
-            if (dumpList != null)
-            {
-                dumpList.Clear();
             }
         }
 
@@ -189,6 +158,11 @@ namespace Microsoft.TestPlatform.Extensions.BlameDataCollector
 
             this.output.Error(false, sb.ToString());
 
+            if (this.isDumpEnabled)
+            {
+            }
+
+            /*
             // Checks for operating system
             // If windows, prints the dump folder name if obtained
             if (this.environment.OperatingSystem.Equals(PlatformOperatingSystem.Windows))
@@ -204,15 +178,15 @@ namespace Microsoft.TestPlatform.Extensions.BlameDataCollector
                     else
                     {
                         this.output.WriteLine(string.Empty, OutputLevel.Information);
-                        this.output.WriteLine(Resources.Resources.EnableLocalCrashDumpGuidance + LocalCrashDumpUtilities.EnableLocalCrashDumpForwardLink, OutputLevel.Information);
+                        this.output.WriteLine(Resources.Resources.EnableLocalCrashDumpGuidance + "broken link", OutputLevel.Information);
                     }
                 }
                 else
                 {
                     this.output.WriteLine(string.Empty, OutputLevel.Information);
-                    this.output.WriteLine(Resources.Resources.EnableLocalCrashDumpGuidance + LocalCrashDumpUtilities.EnableLocalCrashDumpForwardLink, OutputLevel.Information);
+                    this.output.WriteLine(Resources.Resources.EnableLocalCrashDumpGuidance + "broken link", OutputLevel.Information);
                 }
-            }
+            }*/
         }
 
         #endregion
@@ -235,10 +209,11 @@ namespace Microsoft.TestPlatform.Extensions.BlameDataCollector
             {
                 if (attachmentSet.DisplayName.Equals(Constants.BlameDataCollectorName))
                 {
-                    var uriDataAttachment = attachmentSet.Attachments.LastOrDefault();
+                    var uriDataAttachment = attachmentSet.Attachments.LastOrDefault((attachment) => { return attachment.Uri.ToString().EndsWith(".xml"); });
                     if (uriDataAttachment != null)
                     {
                         var filepath = uriDataAttachment.Uri.LocalPath;
+
                         var testCaseList = this.blameReaderWriter.ReadTestSequence(filepath);
                         if (testCaseList.Count > 0)
                         {

@@ -251,6 +251,17 @@ namespace Microsoft.VisualStudio.TestPlatform.Common.DataCollector
             return new Collection<AttachmentSet>(result);
         }
 
+        public void TestHostInitialized(int processId)
+        {
+            // If datacollectors are not configured or datacollection is not enabled, return false.
+            if (!this.isDataCollectionEnabled)
+            {
+                return;
+            }
+
+            this.SendEvent(new TestHostInitializedEventArgs(processId));
+        }
+
         /// <inheritdoc/>
         public bool SessionStarted()
         {

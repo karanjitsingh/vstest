@@ -23,6 +23,12 @@ namespace Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection
 
         #region Events
 
+
+        /// <summary>
+        /// Raised when a session is starting
+        /// </summary>
+        public abstract event EventHandler<TestHostInitializedEventArgs> TestHostInitialized;
+
         /// <summary>
         /// Raised when a session is starting
         /// </summary>

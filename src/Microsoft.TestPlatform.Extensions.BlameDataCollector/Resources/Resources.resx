@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AbortedTestRun" xml:space="preserve">
-    <value>The active Test Run was aborted because the host process exited unexpectedly while executing following test(s):</value>
+    <value>The active test Run was aborted because the host process exited unexpectedly while executing following test(s):</value>
   </data>
   <data name="EnableLocalCrashDumpGuidance" xml:space="preserve">
     <value>To investigate further, enable local crash dump either at machine level or for process and use --blame:dump|/blame:dump for getting dump file. Go to more details :</value>

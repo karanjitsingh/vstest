@@ -3,7 +3,7 @@
 
 namespace Microsoft.TestPlatform.Extensions.BlameDataCollector.UnitTests
 {
-    using System;
+    /* using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using Microsoft.TestPlatform.PlatformAbstractions.Interfaces;
@@ -16,21 +16,21 @@ namespace Microsoft.TestPlatform.Extensions.BlameDataCollector.UnitTests
     using Moq;
 
     /// <summary>
-    /// The blame mode test host launcher tests.
+    /// The blame dump mode test host launcher tests.
     /// </summary>
     [TestClass]
-    public class BlameModeTestHostLauncherTests
+    public class DumpModeTestHostLauncherTests
     {
         private Mock<IProcessHelper> mockProcessHelper;
         private TestableCrashDumpUtilities crashDumpUtilities;
         private Mock<IEnvironment> mockEnvironment;
         private Mock<IFileHelper> mockFileHelper;
         private Mock<IBlameDumpFolder> mockBlameDumpFolderGetter;
-        private BlameModeTestHostLauncher blameModeTestHostLauncher;
+        private DumpModeTestHostLauncher dumpModeTestHostLauncher;
         private string errorMessage;
         private int exitCode;
 
-        public BlameModeTestHostLauncherTests()
+        public DumpModeTestHostLauncherTests()
         {
             this.mockProcessHelper = new Mock<IProcessHelper>();
             this.mockFileHelper = new Mock<IFileHelper>();
@@ -41,10 +41,10 @@ namespace Microsoft.TestPlatform.Extensions.BlameDataCollector.UnitTests
         [TestMethod]
         public void LaunchTestHostShouldThrowExceptionIfTestHostStartInfIsNull()
         {
-            this.blameModeTestHostLauncher = this.GetBlameModeTestHostLauncher();
+            this.dumpModeTestHostLauncher = this.GetDumpModeTestHostLauncher();
             Assert.ThrowsException<ArgumentNullException>(() =>
             {
-                this.blameModeTestHostLauncher.LaunchTestHost(null);
+                this.dumpModeTestHostLauncher.LaunchTestHost(null);
             });
         }
 
@@ -60,9 +60,9 @@ namespace Microsoft.TestPlatform.Extensions.BlameDataCollector.UnitTests
                         It.IsAny<IDictionary<string, string>>(),
                         It.IsAny<Action<object, string>>(),
                         It.IsAny<Action<object>>())).Returns(Process.GetCurrentProcess());
-            this.blameModeTestHostLauncher = this.GetBlameModeTestHostLauncher();
+            this.dumpModeTestHostLauncher = this.GetDumpModeTestHostLauncher();
 
-            int processId = this.blameModeTestHostLauncher.LaunchTestHost(this.GetTestProcessStartInfo());
+            int processId = this.dumpModeTestHostLauncher.LaunchTestHost(this.GetTestProcessStartInfo());
 
             Assert.AreEqual(Process.GetCurrentProcess().Id, processId);
         }
@@ -72,10 +72,10 @@ namespace Microsoft.TestPlatform.Extensions.BlameDataCollector.UnitTests
         [DataRow(-1)]
         public void ProcessExitedButNoErrorMessageIfNoDataWritten(int exitCode)
         {
-            this.blameModeTestHostLauncher = this.GetBlameModeTestHostLauncher();
+            this.dumpModeTestHostLauncher = this.GetDumpModeTestHostLauncher();
             this.ExitCallBackTestHelper(exitCode);
 
-            this.blameModeTestHostLauncher.LaunchTestHost(this.GetTestProcessStartInfo());
+            this.dumpModeTestHostLauncher.LaunchTestHost(this.GetTestProcessStartInfo());
 
             Assert.AreEqual(this.errorMessage, string.Empty);
             Assert.AreEqual(this.exitCode, exitCode);
@@ -86,10 +86,10 @@ namespace Microsoft.TestPlatform.Extensions.BlameDataCollector.UnitTests
         [DataRow("")]
         public void ErrorReceivedCallbackShouldNotLogNullOrEmptyData(string errorData)
         {
-            this.blameModeTestHostLauncher = this.GetBlameModeTestHostLauncher();
+            this.dumpModeTestHostLauncher = this.GetDumpModeTestHostLauncher();
             this.ErrorCallBackTestHelper(errorData, -1);
 
-            this.blameModeTestHostLauncher.LaunchTestHost(this.GetTestProcessStartInfo());
+            this.dumpModeTestHostLauncher.LaunchTestHost(this.GetTestProcessStartInfo());
 
             Assert.AreEqual(this.errorMessage, string.Empty);
         }
@@ -104,10 +104,10 @@ namespace Microsoft.TestPlatform.Extensions.BlameDataCollector.UnitTests
             string dumpFolder;
             this.mockBlameDumpFolderGetter.Setup(x => x.GetCrashDumpFolderPath(It.IsAny<string>(), out dumpFolder)).Returns(true);
 
-            this.blameModeTestHostLauncher = this.GetBlameModeTestHostLauncher();
+            this.dumpModeTestHostLauncher = this.GetDumpModeTestHostLauncher();
             this.ExitCallBackTestHelper(exitCode);
 
-            this.blameModeTestHostLauncher.LaunchTestHost(this.GetTestProcessStartInfo());
+            this.dumpModeTestHostLauncher.LaunchTestHost(this.GetTestProcessStartInfo());
 
             Assert.AreEqual(1, BlameLogger.GetDumpListCount());
         }
@@ -119,10 +119,10 @@ namespace Microsoft.TestPlatform.Extensions.BlameDataCollector.UnitTests
             this.mockEnvironment.Setup(x => x.OperatingSystem).Returns(PlatformOperatingSystem.Unix);
             this.mockFileHelper.Setup(x => x.Exists(It.IsAny<string>())).Returns(true);
 
-            this.blameModeTestHostLauncher = this.GetBlameModeTestHostLauncher();
+            this.dumpModeTestHostLauncher = this.GetDumpModeTestHostLauncher();
             this.ExitCallBackTestHelper(exitCode);
 
-            this.blameModeTestHostLauncher.LaunchTestHost(this.GetTestProcessStartInfo());
+            this.dumpModeTestHostLauncher.LaunchTestHost(this.GetTestProcessStartInfo());
 
             Assert.AreEqual(0, BlameLogger.GetDumpListCount());
         }
@@ -136,10 +136,10 @@ namespace Microsoft.TestPlatform.Extensions.BlameDataCollector.UnitTests
             this.mockFileHelper.Setup(x => x.Exists(It.IsAny<string>())).Returns(true);
 
             this.crashDumpUtilities = new TestableCrashDumpUtilities(filename, this.mockFileHelper.Object);
-            this.blameModeTestHostLauncher = this.GetBlameModeTestHostLauncher();
+            this.dumpModeTestHostLauncher = this.GetDumpModeTestHostLauncher();
             this.ExitCallBackTestHelper(exitCode);
 
-            this.blameModeTestHostLauncher.LaunchTestHost(this.GetTestProcessStartInfo());
+            this.dumpModeTestHostLauncher.LaunchTestHost(this.GetTestProcessStartInfo());
 
             Assert.AreEqual(0, BlameLogger.GetDumpListCount());
         }
@@ -150,14 +150,12 @@ namespace Microsoft.TestPlatform.Extensions.BlameDataCollector.UnitTests
             BlameLogger.ClearDumpList();
         }
 
-        private TestableBlameModeTestHostLauncher GetBlameModeTestHostLauncher()
+        private TestableDumpModeTestHostLauncher GetDumpModeTestHostLauncher()
         {
-            var launcher = new TestableBlameModeTestHostLauncher(
+            var launcher = new TestableDumpModeTestHostLauncher(
                 this.mockProcessHelper.Object,
-                this.crashDumpUtilities,
                 this.mockEnvironment.Object,
-                this.mockFileHelper.Object,
-                this.mockBlameDumpFolderGetter.Object);
+                this.mockFileHelper.Object);
 
             return launcher;
         }
@@ -169,7 +167,7 @@ namespace Microsoft.TestPlatform.Extensions.BlameDataCollector.UnitTests
             return processInfo;
         }
 
-        private void BlameModeTestHostLauncherHostExited(object sender, HostProviderEventArgs e)
+        private void DumpModeTestHostLauncherHostExited(object sender, HostProviderEventArgs e)
         {
             if (e.ErrroCode != 0)
             {
@@ -177,15 +175,15 @@ namespace Microsoft.TestPlatform.Extensions.BlameDataCollector.UnitTests
             }
         }
 
-        private void TestableBlameModeTestHostLauncherHostExited(object sender, HostProviderEventArgs e)
+        private void TestabledumpModeTestHostLauncherHostExited(object sender, HostProviderEventArgs e)
         {
             this.errorMessage = e.Data.TrimEnd(Environment.NewLine.ToCharArray());
             this.exitCode = e.ErrroCode;
         }
 
-        private void ErrorCallBackTestHelper(string errorMessage, int exitCode)
+         private void ErrorCallBackTestHelper(string errorMessage, int exitCode)
         {
-            this.blameModeTestHostLauncher.HostExited += this.BlameModeTestHostLauncherHostExited;
+            this.dumpModeTestHostLauncher.HostExited += this.DumpModeTestHostLauncherHostExited;
 
             this.mockProcessHelper.Setup(
                     ph =>
@@ -210,7 +208,7 @@ namespace Microsoft.TestPlatform.Extensions.BlameDataCollector.UnitTests
 
         private void ExitCallBackTestHelper(int exitCode)
         {
-            this.blameModeTestHostLauncher.HostExited += this.TestableBlameModeTestHostLauncherHostExited;
+            this.dumpModeTestHostLauncher.HostExited += this.TestabledumpModeTestHostLauncherHostExited;
 
             this.mockProcessHelper.Setup(
                     ph =>
@@ -234,23 +232,21 @@ namespace Microsoft.TestPlatform.Extensions.BlameDataCollector.UnitTests
         /// <summary>
         /// The testable blame mode test host launcher.
         /// </summary>
-        private class TestableBlameModeTestHostLauncher : BlameModeTestHostLauncher
+        private class TestableDumpModeTestHostLauncher : DumpModeTestHostLauncher
         {
             /// <summary>
-            /// Initializes a new instance of the <see cref="TestableBlameModeTestHostLauncher"/> class.
+            /// Initializes a new instance of the <see cref="TestableDumpModeTestHostLauncher"/> class.
             /// </summary>
             /// <param name="processHelper">Process Helper</param>
             /// <param name="crashDumpUtilities">Crash dump Utilities</param>
             /// <param name="environment">Environment</param>
             /// <param name="fileHelper">File Helper</param>
-            /// <param name="blameDumpFolderGetter">Blame Dump Folder Getter</param>
-            public TestableBlameModeTestHostLauncher(
+            /// <param name="processDumpUtility">Process dump utility</param>
+            public TestableDumpModeTestHostLauncher(
                 IProcessHelper processHelper,
-                LocalCrashDumpUtilities crashDumpUtilities,
                 IEnvironment environment,
-                IFileHelper fileHelper,
-                IBlameDumpFolder blameDumpFolderGetter)
-                : base(processHelper, crashDumpUtilities, environment, fileHelper, blameDumpFolderGetter)
+                IFileHelper fileHelper)
+                : base(processHelper, environment, fileHelper)
             {
                 this.ErrorLength = 22;
             }
@@ -281,5 +277,5 @@ namespace Microsoft.TestPlatform.Extensions.BlameDataCollector.UnitTests
                 return this.filename;
             }
         }
-    }
+    } */
 }

@@ -70,8 +70,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CommandLine.Processors
                     this.executor = new Lazy<IArgumentExecutor>(() =>
                                         new EnableBlameArgumentExecutor(RunSettingsManager.Instance,
                                                                         TestRequestManager.Instance,
-                                                                        CommandLineOptions.Instance,
-                                                                        new BlameModeTestHostLauncher()));
+                                                                        CommandLineOptions.Instance));
                 }
 
                 return this.executor;
@@ -138,7 +137,6 @@ namespace Microsoft.VisualStudio.TestPlatform.CommandLine.Processors
         /// <summary>
         /// Custom TestHostLauncher
         /// </summary>
-        public ITestHostLauncher customTestHostLauncher;
 
         /// <summary>
         /// Ioutput
@@ -147,11 +145,10 @@ namespace Microsoft.VisualStudio.TestPlatform.CommandLine.Processors
 
         #region Constructor
 
-        internal EnableBlameArgumentExecutor(IRunSettingsProvider runSettingsManager, ITestRequestManager testRequestManager, CommandLineOptions commandLineOptions, ITestHostLauncher testHostLauncher)
+        internal EnableBlameArgumentExecutor(IRunSettingsProvider runSettingsManager, ITestRequestManager testRequestManager, CommandLineOptions commandLineOptions)
         {
             this.runSettingsManager = runSettingsManager;
             this.commandLineOptions = commandLineOptions;
-            this.customTestHostLauncher = testHostLauncher;
             this.testRequestManager = testRequestManager;
             this.output = ConsoleOutput.Instance;
         }
@@ -217,6 +214,13 @@ namespace Microsoft.VisualStudio.TestPlatform.CommandLine.Processors
             var node = XmlDocument.CreateElement("ResultsDirectory");
             outernode.AppendChild(node);
             node.InnerText = resultsDirectory;
+
+            if(isDumpEnabled)
+            {
+                var dumpNode = XmlDocument.CreateElement("Dump");
+                outernode.AppendChild(dumpNode);
+                dumpNode.InnerText = "true";
+            }
 
             foreach(var item in dataCollectionRunSettings.DataCollectorSettingsList)
             {
@@ -287,14 +291,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CommandLine.Processors
 
             var runRequestPayload = new TestRunRequestPayload() { Sources = this.commandLineOptions.Sources.ToList(), RunSettings = runSettings, KeepAlive = keepAlive };
             
-            if (isDumpEnabled)
-            {
-                this.testRequestManager.RunTests(runRequestPayload, this.customTestHostLauncher, null, Constants.DefaultProtocolConfig);
-            }
-            else
-            {
-                this.testRequestManager.RunTests(runRequestPayload, null, null, Constants.DefaultProtocolConfig);
-            }
+            this.testRequestManager.RunTests(runRequestPayload, null, null, Constants.DefaultProtocolConfig);
 
             if (EqtTrace.IsInfoEnabled)
             {

@@ -3,7 +3,7 @@
 
 namespace Microsoft.TestPlatform.Extensions.BlameDataCollector.UnitTests
 {
-    using System;
+    /* using System;
     using System.IO;
     using Microsoft.VisualStudio.TestPlatform.Utilities.Helpers.Interfaces;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -81,5 +81,5 @@ namespace Microsoft.TestPlatform.Extensions.BlameDataCollector.UnitTests
             {
             }
         }
-    }
+    } */
 }
