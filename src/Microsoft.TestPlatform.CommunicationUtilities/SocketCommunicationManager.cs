@@ -241,6 +241,9 @@ namespace Microsoft.VisualStudio.TestPlatform.CommunicationUtilities
         {
             var serializedObject = this.dataSerializer.SerializeMessage(messageType);
             this.WriteAndFlushToChannel(serializedObject);
+
+            var ph = new ProcessHelper();
+            EqtTrace.Info("PROTOCOL    {0} Send: {1}", ph.GetProcessName(ph.GetCurrentProcessId()), serializedObject);
         }
 
         /// <summary>
@@ -252,6 +255,9 @@ namespace Microsoft.VisualStudio.TestPlatform.CommunicationUtilities
         {
             var rawMessage = this.dataSerializer.SerializePayload(messageType, payload);
             this.WriteAndFlushToChannel(rawMessage);
+
+            var ph = new ProcessHelper();
+            EqtTrace.Info("PROTOCOL    {0} Send: {1}", ph.GetProcessName(ph.GetCurrentProcessId()), rawMessage);
         }
 
         /// <summary>
@@ -264,6 +270,9 @@ namespace Microsoft.VisualStudio.TestPlatform.CommunicationUtilities
         {
             var rawMessage = this.dataSerializer.SerializePayload(messageType, payload, version);
             this.WriteAndFlushToChannel(rawMessage);
+
+            var ph = new ProcessHelper();
+            EqtTrace.Info("PROTOCOL    {0} Send: {1}", ph.GetProcessName(ph.GetCurrentProcessId()), rawMessage);
         }
 
         /// <summary>
@@ -273,6 +282,9 @@ namespace Microsoft.VisualStudio.TestPlatform.CommunicationUtilities
         public void SendRawMessage(string rawMessage)
         {
             this.WriteAndFlushToChannel(rawMessage);
+
+            var ph = new ProcessHelper();
+            EqtTrace.Info("PROTOCOL    {0} Send: {1}", ph.GetProcessName(ph.GetCurrentProcessId()), rawMessage);
         }
 
         /// <summary>
@@ -282,6 +294,10 @@ namespace Microsoft.VisualStudio.TestPlatform.CommunicationUtilities
         public Message ReceiveMessage()
         {
             var rawMessage = this.ReceiveRawMessage();
+
+            var ph = new ProcessHelper();
+            EqtTrace.Info("PROTOCOL    {0} Receive: {1}", ph.GetProcessName(ph.GetCurrentProcessId()), rawMessage);
+
             return this.dataSerializer.DeserializeMessage(rawMessage);
         }
 

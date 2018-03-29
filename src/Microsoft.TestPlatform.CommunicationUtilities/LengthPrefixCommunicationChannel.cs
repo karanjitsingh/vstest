@@ -32,7 +32,7 @@ namespace Microsoft.VisualStudio.TestPlatform.CommunicationUtilities
             this.reader = new BinaryReader(stream, Encoding.UTF8, true);
 
             // Using the Buffered stream while writing, improves the write performance. By reducing the number of writes.
-            this.writer = new BinaryWriter(new PlatformStream().CreateBufferedStream(stream, SocketConstants.BufferSize), Encoding.UTF8, true);
+            this.writer = new BinaryWriter(new PlatformStream().CreateBufferedStream(stream, 5), Encoding.UTF8, true);
         }
 
         /// <inheritdoc />
@@ -41,6 +41,9 @@ namespace Microsoft.VisualStudio.TestPlatform.CommunicationUtilities
         /// <inheritdoc />
         public Task Send(string data)
         {
+            var ph = new ProcessHelper();
+            EqtTrace.Info("PROTOCOL    {0} Send: {1}", ph.GetProcessName(ph.GetCurrentProcessId()), data);
+
             try
             {
                 // Writing Message on binarywriter is not Thread-Safe
@@ -69,6 +72,10 @@ namespace Microsoft.VisualStudio.TestPlatform.CommunicationUtilities
             if (this.MessageReceived != null)
             {
                 var data = this.reader.ReadString();
+
+                var ph = new ProcessHelper();
+                EqtTrace.Info("PROTOCOL    {0} Receive: {1}", ph.GetProcessName(ph.GetCurrentProcessId()), data);
+
                 this.MessageReceived.SafeInvoke(this, new MessageReceivedEventArgs { Data = data }, "LengthPrefixCommunicationChannel: MessageReceived");
             }
 

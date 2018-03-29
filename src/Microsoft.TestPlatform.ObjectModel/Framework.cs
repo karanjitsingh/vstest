@@ -73,6 +73,9 @@ namespace Microsoft.VisualStudio.TestPlatform.ObjectModel
                     case "frameworkuap10":
                         frameworkName = new FrameworkName(Constants.DotNetFrameworkUap10);
                         break;
+                    case "javascript":
+                        frameworkName = new FrameworkName(Constants.JavaScriptFramework);
+                        break;
                     default:
                         return null;
                 }

@@ -205,6 +205,8 @@ namespace Microsoft.VisualStudio.TestPlatform.ObjectModel
 
         public const string DotNetFrameworkUap10 = "Uap,Version=v10.0";
 
+        public const string JavaScriptFramework = "JavaScript,Version=v1.0";
+
         public const string TargetFrameworkName = "TargetFrameworkName";
     }
 
