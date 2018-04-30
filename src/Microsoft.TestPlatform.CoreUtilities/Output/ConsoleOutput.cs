@@ -3,6 +3,7 @@
 
 namespace Microsoft.VisualStudio.TestPlatform.Utilities
 {
+    using Microsoft.VisualStudio.TestPlatform.ObjectModel;
     using System;
     using System.IO;
 
@@ -57,6 +58,7 @@ namespace Microsoft.VisualStudio.TestPlatform.Utilities
         /// <param name="level">Level of the message.</param>
         public void WriteLine(string message, OutputLevel level)
         {
+            EqtTrace.Verbose($"output: level {level}: {message}");
             this.Write(message, level);
             this.Write(Environment.NewLine, level);
         }

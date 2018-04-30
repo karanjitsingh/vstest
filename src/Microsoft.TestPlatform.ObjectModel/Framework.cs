@@ -5,6 +5,7 @@ namespace Microsoft.VisualStudio.TestPlatform.ObjectModel
 {
     using System;
     using System.Runtime.Versioning;
+    using System.Text.RegularExpressions;
 
     /// <summary>
     /// Class for target Framework for the test container
@@ -56,6 +57,10 @@ namespace Microsoft.VisualStudio.TestPlatform.ObjectModel
             }
             catch
             {
+
+                var regex = new Regex(@"javascript\.([a-b]+)",RegexOptions.IgnoreCase);
+                var match = regex.Match(frameworkString.Trim());
+                
                 switch (frameworkString.Trim().ToLower())
                 {
                     case "framework35":
@@ -73,8 +78,11 @@ namespace Microsoft.VisualStudio.TestPlatform.ObjectModel
                     case "frameworkuap10":
                         frameworkName = new FrameworkName(Constants.DotNetFrameworkUap10);
                         break;
-                    case "javascript":
-                        frameworkName = new FrameworkName(Constants.JavaScriptFramework);
+                    case "javascript.jasmine":
+                        frameworkName = new FrameworkName(Constants.JasmineFramework);
+                        break;
+                    case "javascript.mocha":
+                        frameworkName = new FrameworkName(Constants.MochaFramework);
                         break;
                     default:
                         return null;
